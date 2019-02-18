@@ -15,60 +15,42 @@ import traceback
 
 currentTime = datetime.now().strftime('%Y-%m-%d %H:%M')
 
-def getBikesData():
-    #retrieve dbikes data and store as a string
-    dburl='https://api.jcdecaux.com/vls/v1/stations?contract=dublin&apiKey=a3d2f945558b9f5f4eb7c43a28e4a87a99531d25'
-    dbds=requests.get(dburl).json()
+#retrieve dbikes data and store as a string
+dburl='https://api.jcdecaux.com/vls/v1/stations?contract=dublin&apiKey=a3d2f945558b9f5f4eb7c43a28e4a87a99531d25'
+dbds=requests.get(dburl).json()
 
+def getBikesData(i):
     #store each piece of data from the weather info json as a variable so that we may later store it in out MySQL DB
     #most data will be whole numbers - we have rounded up any decimals to simplify data storage in the DB
     bikeDataSQL = ""
     bikeDataSQL += "'" + currentTime + "',"
 
-    stationName = dbds[0]['name']
-    bikeDataSQL+= "'" + stationName + "',"
+    stationName = dbds[i]['name']
+    bikeDataSQL+= '"' + stationName + '",'
 
-    print(stationName)
-
-    stationLat = str(dbds[0]['position']['lat'])
+    stationLat = str(dbds[i]['position']['lat'])
     bikeDataSQL+= "'" + stationLat + "',"
 
-    print(stationLat)
-
-    stationLong = str(dbds[0]['position']['lng'])
+    stationLong = str(dbds[i]['position']['lng'])
     bikeDataSQL+= "'" + stationLong + "',"
 
-    print(stationLong)
-
-    stationBanking = str(dbds[0]['banking'])
+    stationBanking = str(dbds[i]['banking'])
     bikeDataSQL+= "'" + stationBanking + "',"
 
-    print(stationBanking)
-
-    stationStands = str(dbds[0]['bike_stands'])
+    stationStands = str(dbds[i]['bike_stands'])
     bikeDataSQL+= "'" + stationStands + "',"
 
-    print(stationStands)
-
-    stationStdsAvailable = str(dbds[0]['available_bike_stands'])
+    stationStdsAvailable = str(dbds[i]['available_bike_stands'])
     bikeDataSQL+= "'" + stationStdsAvailable + "',"
 
-    print(stationStdsAvailable)
-
-    stationBikesAvailable = str(dbds[0]['available_bikes'])
+    stationBikesAvailable = str(dbds[i]['available_bikes'])
     bikeDataSQL+= "'" + stationBikesAvailable + "',"
 
-    print(stationBikesAvailable)
-
-    stationStatus = str(dbds[0]['status'])
+    stationStatus = str(dbds[i]['status'])
     bikeDataSQL+= "'" + stationStatus + "',"
 
-    print(stationStatus)
-
-    stationLastUpdate = str(dbds[0]['last_update'])
+    stationLastUpdate = str(dbds[i]['last_update'])
     bikeDataSQL+= "'" + stationLastUpdate + "')"
-
-    print(stationLastUpdate)
 
     insertStatement = "INSERT INTO dublinBikesInfo (dateTime, stationName, stationLat, stationLong, stationBanking, stationStands, stationStdsAvailable, stationBikesAvailable, stationStatus, stationLastUpdate) VALUES ("
     insertStatement += bikeDataSQL
@@ -169,9 +151,10 @@ def writeData(query):
 try:
     SQL = getWeatherData()
     writeData(SQL)
-    bikesSQL = getBikesData()
-    print(bikesSQL)
-    writeData(bikesSQL)
+    for i in range(0,len(dbds)):
+        bikesSQL = getBikesData(i)
+        writeData(bikesSQL)
+
 except:
     errorLog = open("errors.log","a+")
     errorLog.write("Failed to write to DB at " + currentTime + "\n")

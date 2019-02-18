@@ -11,6 +11,7 @@ Created on Mon Feb 18 17:43:11 2019
 import requests
 from datetime import datetime
 import pymysql
+import traceback
 
 currentTime = datetime.now().strftime('%Y-%m-%d %H:%M')
 
@@ -110,8 +111,13 @@ try:
     SQL = getWeatherData()
     writeWeatherData(SQL)
 except:
-    print("ehhhh")
+    errorLog = open("errors.log","a+")
+    errorLog.write("Failed to write to DB at " + currentTime + "\n")
+    errorLog.close()
     
-    
+    errorDetails = open("errorDetails.log","a+")
+    errorDetails.write("Details of error at " + currentTime + ":\n \n")
+    errorDetails.write(traceback.format_exc() + "\n")
+    errorDetails.close()  
     
     

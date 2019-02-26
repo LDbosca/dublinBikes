@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Current Weather Info</title>
+</head>
+<body>
+
+<h1>Current Weather Conditions</h1>
+
+<p> The current weather is {{ wds['weather'][0]['description'] }} </p>
+<p> The current temperature is {{ wds['main']['temp'] }} degrees centigrade</p>
+    <img src="http://openweathermap.org/img/w/{{wds['weather'][0]['icon']}}.png">
+</body>
+</html>
+

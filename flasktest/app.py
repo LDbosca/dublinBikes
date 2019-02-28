@@ -31,7 +31,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return render_template('weather.html', wds=wds)
+    return render_template('weatherDateTime.html', wds=wds)
 
 
 if __name__ == "__main__":

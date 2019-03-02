@@ -20,9 +20,9 @@
 
     <h1>Current Weather Conditions</h1>
 
-    <p> The current weather is {{ wds['weather'][0]['description'] }} </p>
-    <p> The current temperature is {{ wds['main']['temp'] }} degrees centigrade</p>
-    <img src="http://openweathermap.org/img/w/{{wds['weather'][0]['icon']}}.png">
+    <p> The current weather is {{ wds[0]['weatherDescr'] }} </p>
+    <p> The current temperature is {{ wds[0]['temperature'] }} degrees centigrade</p>
+    <img src="http://openweathermap.org/img/w/{{wds[0]['weatherIcon']}}.png">
 
     <br>
     <div class="container">

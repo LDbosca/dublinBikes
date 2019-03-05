@@ -9,7 +9,7 @@
 <!--HTML element to hold the map:!-->
 <div id="googleMap" style="width:100%;height:500px;"></div>
     
-
+<div id="stationsDropDown" ></div>
 <script>
     
 function myMap() {
@@ -22,12 +22,37 @@ var mapProp= {
 var map = new google.maps.Map(document.getElementById("googleMap"),mapProp);
 
  
-//using jQuery to import JSON filefrom url and pass it to the function 
+//using jQuery to import JSON file from flask and pass it to the function 
 $.getJSON('http://127.0.0.1:5000/stations', function (data) {
     displayStation(data);
+    dropDown(data);
 });
 
+function dropDown(obj){
+
+    var stations = obj;
+    // creating an array that will contain all Countries
+    var stationList = [];
+    // loop that iterates thtough the object
+    // pushing Countries into array after checking if they have been already added
+    for (var i=0; i <stations.length; i++) {  
+        if (stationList.indexOf(stations[i].stationName) == -1){
+            stationList.push(stations[i].stationName)
+        }}
+        // this will sort the array in alphabetical order
+        stationList.sort();
+    //creating the selection drop down menu with a loop that iterates thourgh the array
+    var selStation = "<select id=stationMenu>"
+    selStation += "<option value=" + 'selStation' + ">"+ 'Select Station:' +"</option>"
+    for (i=0; i <stationList.length; i++){
+        selStation += "<option value="+stationList[i]+">"+ stationList[i] + "</option>"
+        }
+    selStation += "</select>"
     
+    document.getElementById("stationsDropDown").innerHTML = selStation;
+    
+}    
+
 function displayStation(obj) {
     // variable that contains station information
     var stations = obj;

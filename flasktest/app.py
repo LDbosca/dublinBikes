@@ -1,7 +1,8 @@
-from flask import Flask, render_template
-#import DBjson
+from flask import Flask, render_template, jsonify
+import DBjson
 import pymysql
 import json
+from flask_cors import CORS
 #from flask_sqlalchemy import SQLAlchemy
 
 #login details for AWS RDS DB
@@ -52,14 +53,22 @@ def fetchFromDB(host,port,dbname,user,password,query,jsonString=False):
 
 
 app = Flask(__name__)
+#CORS prevents Cross-Origin errors due to the fact that json is local
+CORS(app)
 
 
 @app.route('/')
 def index():
-    wds = fetchFromDB(host,port,dbname,user,password,weatherQuery)
-    bds = fetchFromDB(host,port,dbname,user,password,bikesQuery)
+    wds = DBjson.fetchFromDB(host,port,dbname,user,password,weatherQuery)
+    bds = DBjson.fetchFromDB(host,port,dbname,user,password,bikesQuery)
     return render_template('weatherDateTime.html', wds=wds, bds=bds)
+
+@app.route('/stations')
+def stations():
+    bds = fetchFromDB(host,port,dbname,user,password,bikesQuery)
+    return jsonify(bds)
+
 
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)

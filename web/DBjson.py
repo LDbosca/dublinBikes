@@ -7,7 +7,8 @@ Created on Wed Feb 27 11:56:35 2019
 """
 
 import pymysql
-import json
+import time
+import requests
 
 def fetchFromDB(host,port,dbname,user,password,query):
     '''
@@ -27,3 +28,21 @@ def fetchFromDB(host,port,dbname,user,password,query):
         conn.close()
 
     return result
+
+
+
+#url for openweathermap API request for Dublin
+#url='http://api.openweathermap.org/data/2.5/forecast?q=Dublin,ie&units=metric&APPID=7c4d32959a99216eeb3c99efc8000278'
+
+def updateWeatherForecast(url,interval):
+   """
+   Takes API URL and update interval (seconds), fetches weather info at intervals, stores in a global - fds
+   """
+   while True:
+        foreCastDatastring=requests.get(url=url)
+        global fds
+        fds = foreCastDatastring.json()
+        time.sleep(interval)
+
+
+

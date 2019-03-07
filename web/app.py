@@ -30,7 +30,7 @@ CORS(app)
 def index():
     wds = DBjson.fetchFromDB(host,port,dbname,user,password,weatherQuery)
     bds = DBjson.fetchFromDB(host,port,dbname,user,password,bikesQuery)
-    return render_template('weatherDateTime.html', wds=wds, bds=bds)
+    return render_template('index.html', wds=wds, bds=bds)
 
 @app.route('/stations')
 def stations():

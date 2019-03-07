@@ -13,11 +13,11 @@ password="dublinbikes"
 
 bikesQuery = "SELECT * FROM dublinBikesInfo WHERE dateTime=(SELECT MAX(dateTIME) FROM dublinBikesInfo);"
 weatherQuery = "SELECT * FROM weatherInfo WHERE dateTime=(SELECT MAX(dateTime) FROM weatherInfo);"
+
 forecastURL='http://api.openweathermap.org/data/2.5/forecast?q=Dublin,ie&units=metric&APPID=7c4d32959a99216eeb3c99efc8000278'
 
-
+#start updateWeatherInfo as background process - forecast data is stored in global variable called fds
 APIthread = threading.Thread(name='updateWeatherForecast', target=DBjson.updateWeatherForecast,args=[forecastURL,1200])
-#start updateWeatherInfo as background process - fds is forecast data object
 APIthread.start()
 
 
@@ -37,6 +37,10 @@ def stations():
     bds = DBjson.fetchFromDB(host,port,dbname,user,password,bikesQuery)
     return jsonify(bds)
 
+
+@app.route('/<int:unixTime>')
+def forecast(unixTime):
+    return str(DBjson.matchWeatherForecast(unixTime))
 
 
 if __name__ == "__main__":

@@ -26,8 +26,14 @@
     <p> The current weather is {{ wds[0]['weatherDescr'] }} </p>
     <p> The current temperature is {{ wds[0]['temperature'] }} degrees centigrade</p>
     <img src="http://openweathermap.org/img/w/{{wds[0]['weatherIcon']}}.png">
-
+    
     <br>
+    {% if forecast %}
+    <p>The forecasted weather is {{ futureWeatherJson['weather'][0]['description']}}<br>
+        The forecasted temperature is {{ futureWeatherJson['main']['temp']}}<br>
+    </p>
+    <img src="http://openweathermap.org/img/w/{{futureWeatherJson['weather'][0]['icon']}}.png">
+    {% endif %}
     <div class="container">
         <div class="panel panel-primary">
             <div class="panel-heading">Select your travel date</div>

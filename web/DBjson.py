@@ -9,6 +9,7 @@ Created on Wed Feb 27 11:56:35 2019
 import pymysql
 import time
 import requests
+from flask import g
 
 def fetchFromDB(host,port,dbname,user,password,query):
     '''
@@ -49,6 +50,6 @@ def matchWeatherForecast(unixTime):
     """
     for i in range(len(fds['list'])):
         if unixTime <= fds['list'][i]['dt']:
-            return fds['list'][i]['main']['temp']
+            return fds['list'][i]
     return False
 

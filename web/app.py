@@ -1,4 +1,4 @@
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template, jsonify, g
 import DBjson
 import threading
 from flask_cors import CORS
@@ -20,7 +20,6 @@ forecastURL='http://api.openweathermap.org/data/2.5/forecast?q=Dublin,ie&units=m
 APIthread = threading.Thread(name='updateWeatherForecast', target=DBjson.updateWeatherForecast,args=[forecastURL,1200])
 APIthread.start()
 
-
 app = Flask(__name__)
 #CORS prevents Cross-Origin errors due to the fact that json is local
 CORS(app)
@@ -40,7 +39,10 @@ def stations():
 
 @app.route('/<int:unixTime>')
 def forecast(unixTime):
-    return str(DBjson.matchWeatherForecast(unixTime))
+    wds = DBjson.fetchFromDB(host,port,dbname,user,password,weatherQuery)
+    bds = DBjson.fetchFromDB(host,port,dbname,user,password,bikesQuery)
+    futureWeatherJson = DBjson.matchWeatherForecast(unixTime) #json containing forecast for the date/time entered
+    return render_template('index.html', futureWeatherJson=futureWeatherJson,forecast=True,wds=wds,bds=bds)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,11 @@
+
+select {
+    background: #337AB7;
+    color: black;
+    cursor: pointer;
+    height: 30px;
+    width: 30vw;
+    font-size: 15px;
+    font-family: "Poppins";
+}
+

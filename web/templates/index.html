@@ -1,19 +1,17 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+<script src="{{ url_for('static',filename='jquery-3.3.1.js') }}"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/momentjs/2.14.1/moment.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/js/bootstrap-datetimepicker.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/css/bootstrap-datetimepicker.min.css">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
-<script>
-    $(function () {
-    $('#datetimepicker1').datetimepicker();
- });
-</script>
-    <title>Dublin Bikes</title>
+<link rel="stylesheet" href="{{ url_for('static',filename='style.css') }}">
+<link href="https://fonts.googleapis.com/css?family=Roboto|Poppins|Roboto+Slab|Patua+One" rel="stylesheet">
+
+<title>Dublin Bikes</title>
 </head>
 
 <body>
@@ -48,34 +46,66 @@
                                 </span>
                             </div>
                         </div>
+                        <div id="stationsDropDown" ></div>
                     </div>
                 </div>
-                <input type="submit" class="btn btn-primary" value="Submit">
+                <input type="submit" class="btn btn-primary" value="Submit" onclick="displayselection()">
             </div>
         </div>
     </div>
 </div>    
 
-<h2>Select a station</h2>   
-<div id="stationsDropDown" ></div>
+<h2>You selected</h2>   
+<p id="selectedstation"></p>
+<p id="selectedtime"></p>
+<p id="selectedtimeUNIX"></p>
+    
 <script>
+
+// date and time picker
+ $(function () {
+    $('#datetimepicker1').datetimepicker();
+ });
+
+    
+// function that displays user's selection after submitting request
+function displayselection() {
+    // pass date time value to a variable
+    var selectedtime = $('#datetimepicker1').data("DateTimePicker").date();
+    
+    if (selectedtime) {
+    //convert time in unix format
+    var selectedtimeUNIX = selectedtime.unix();
+    }
+    // pass selected station
+    var selectedstation = $('#stationMenu').val();
+
+    // display info
+    document.getElementById("selectedstation").innerHTML = selectedstation;
+    document.getElementById("selectedtime").innerHTML = selectedtime;
+    document.getElementById("selectedtimeUNIX").innerHTML = '<a href='+ROOT + '/' + selectedtimeUNIX+'>'+selectedtimeUNIX+'</a>';
+
+}
     
 function myMap() {
 //The mapProp variable defines the properties for the map.
 var mapProp= {
   center:new google.maps.LatLng(53.350140, -6.266155), //center in Dublin
-  zoom:12,
+  zoom:13,
 };
 //creates a new map inside the <div> element using the parameters that are passed (mapProp).
 var map = new google.maps.Map(document.getElementById("googleMap"),mapProp);
 
- 
+// ROOT is the location of our flask app
+ROOT = window.location.origin; 
+    
 //using jQuery to import JSON file from flask and pass it to the function 
-$.getJSON('http://127.0.0.1:5000/stations', function (data) {
+$.getJSON(ROOT + '/stations', function (data) {
     displayStation(data);
     dropDown(data);
 });
 
+// function that populates dropdown menu with stations
 function dropDown(obj){
 
     var stations = obj;
@@ -93,7 +123,7 @@ function dropDown(obj){
     var selStation = "<select id=stationMenu>"
     selStation += "<option value=" + 'selStation' + ">"+ 'Select Station:' +"</option>"
     for (i=0; i <stationList.length; i++){
-        selStation += "<option value="+stationList[i]+">"+ stationList[i] + "</option>"
+        selStation += "<option value=\""+stationList[i]+"\">"+ stationList[i] + "</option>"
         }
     selStation += "</select>"
     
@@ -101,6 +131,7 @@ function dropDown(obj){
     
 }    
 
+//function that displays stations and info on map
 function displayStation(obj) {
     // variable that contains station information
     var stations = obj;

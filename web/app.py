@@ -1,6 +1,7 @@
-from flask import Flask, render_template, jsonify, g
+from flask import Flask, render_template, jsonify
 import DBjson
 import threading
+import datetime
 from flask_cors import CORS
 #from flask_sqlalchemy import SQLAlchemy
 
@@ -36,14 +37,14 @@ def stations():
     bds = DBjson.fetchFromDB(host,port,dbname,user,password,bikesQuery)
     return jsonify(bds)
 
-
-@app.route('/<int:unixTime>')
-def forecast(unixTime):
+@app.route('/<bikeStation>/<int:unixTime>')
+def forecast(unixTime,bikeStation):
     wds = DBjson.fetchFromDB(host,port,dbname,user,password,weatherQuery)
     bds = DBjson.fetchFromDB(host,port,dbname,user,password,bikesQuery)
     futureWeatherJson = DBjson.matchWeatherForecast(unixTime) #json containing forecast for the date/time entered
-    return render_template('index.html', futureWeatherJson=futureWeatherJson,forecast=True,wds=wds,bds=bds)
-
+    stringTime = datetime.datetime.utcfromtimestamp(unixTime) #convert unixTime into datetime object
+    stringTime = stringTime.strftime("%m/%d/%Y, %H:%M:%S") #convert datetime object into string for webpage
+    return render_template('index.html', futureWeatherJson=futureWeatherJson,forecast=True,wds=wds,bds=bds,bikeStation=bikeStation,stringTime=stringTime)
 
 if __name__ == "__main__":
     app.run(debug=True)

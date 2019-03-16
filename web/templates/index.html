@@ -32,6 +32,12 @@
     </p>
     <img src="http://openweathermap.org/img/w/{{futureWeatherJson['weather'][0]['icon']}}.png">
     {% endif %}
+    {% if bikeStation %}
+    <p>You have selected the <b>{{ bikeStation }}</b> bike station</p>
+    {% endif %}
+    {% if stringTime %}
+    <p>You have selected <b>{{ stringTime }}</b> for your journey</p>
+    {% endif %}
     <div class="container">
         <div class="panel panel-primary">
             <div class="panel-heading">Select your travel date</div>
@@ -55,10 +61,6 @@
     </div>
 </div>    
 
-<h2>You selected</h2>   
-<p id="selectedstation"></p>
-<p id="selectedtime"></p>
-<p id="selectedtimeUNIX"></p>
     
 <script>
 
@@ -79,11 +81,16 @@ function displayselection() {
     }
     // pass selected station
     var selectedstation = $('#stationMenu').val();
-
-    // display info
-    document.getElementById("selectedstation").innerHTML = selectedstation;
-    document.getElementById("selectedtime").innerHTML = selectedtime;
-    document.getElementById("selectedtimeUNIX").innerHTML = '<a href='+ROOT + '/' + selectedtimeUNIX+'>'+selectedtimeUNIX+'</a>';
+    // get address of main page
+    var host = window.location.href;
+    // add station
+    host += selectedstation
+    host += "/"
+    // append appropriate timestamp
+    host += selectedtimeUNIX;
+    
+    //navigate to app route for station/time
+    window.location.replace(host)
 
 }
     

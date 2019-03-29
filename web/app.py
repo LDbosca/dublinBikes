@@ -1,4 +1,5 @@
 from flask import Flask, render_template, jsonify
+from flask_googlecharts import GoogleCharts, BarChart
 import DBjson
 import threading
 import datetime
@@ -21,15 +22,24 @@ forecastURL='http://api.openweathermap.org/data/2.5/forecast?q=Dublin,ie&units=m
 APIthread = threading.Thread(name='updateWeatherForecast', target=DBjson.updateWeatherForecast,args=[forecastURL,1200])
 APIthread.start()
 
+
+
 app = Flask(__name__)
 #CORS prevents Cross-Origin errors due to the fact that json is local
-CORS(app)
-
+# CORS(app)
+# Setup GoogleCharts instance
+charts = GoogleCharts(app)
+chartDisplay=False
 
 @app.route('/')
 def index():
     wds = DBjson.fetchFromDB(host,port,dbname,user,password,weatherQuery)
     bds = DBjson.fetchFromDB(host,port,dbname,user,password,bikesQuery)
+    AvailabilityChart = BarChart("AvailabilityChart", options={"title": "Predicted Bike Availability",
+                                                  "width": 700,
+                                                  "height": 300, "legend":'none'}) # Need to setup empty chart to avoid error in html.
+    charts.register(AvailabilityChart) # Allows the chart to be called from html file.
+    
     return render_template('index.html', wds=wds, bds=bds)
 
 @app.route('/stations')
@@ -43,7 +53,18 @@ def forecast(unixTime,bikeStation):
     bds = DBjson.fetchFromDB(host,port,dbname,user,password,bikesQuery)
     futureWeatherJson = DBjson.matchWeatherForecast(unixTime) #json containing forecast for the date/time entered
     stringTime = datetime.datetime.utcfromtimestamp(unixTime) #convert unixTime into datetime object
+    stringJustTime = stringTime.strftime("%H:%M:%S") #convert time object into string for webpage, graphing.
     stringTime = stringTime.strftime("%m/%d/%Y, %H:%M:%S") #convert datetime object into string for webpage
+
+#    Creates graph and populates
+    AvailabilityChart = BarChart("AvailabilityChart", options={"title": "Predicted Bike Availability",
+                                                  "width": 700,
+                                                  "height": 300, "legend":'none'})
+    AvailabilityChart.add_column("string", "PredictedTime")
+    AvailabilityChart.add_column("number", "Predicted Available Bikes")
+    AvailabilityChart.add_rows([[stringJustTime, 20],[stringJustTime, 10], [stringJustTime, 30]]) # These values will be pulled from the ML model.
+    charts.register(AvailabilityChart)
+    
     return render_template('index.html', futureWeatherJson=futureWeatherJson,forecast=True,wds=wds,bds=bds,bikeStation=bikeStation,stringTime=stringTime)
 
 if __name__ == "__main__":

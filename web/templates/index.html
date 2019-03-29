@@ -10,7 +10,7 @@
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
 <link rel="stylesheet" href="{{ url_for('static',filename='style.css') }}">
 <link href="https://fonts.googleapis.com/css?family=Roboto|Poppins|Roboto+Slab|Patua+One" rel="stylesheet">
-
+    
 <title>Dublin Bikes</title>
 </head>
 
@@ -38,56 +38,92 @@
     {% if stringTime %}
     <p>You have selected <b>{{ stringTime }}</b> for your journey</p>
     {% endif %}
+</div>
+
     <div class="container">
-        <div class="panel panel-primary">
-            <div class="panel-heading">Select your travel date</div>
-            <div class="panel-body">
-                <div class="row">
-                    <div class='col-md-6'>
-                        <div class="form-group">
-                            <div class='input-group date' id='datetimepicker1'>
-                                <input type='text' class="form-control" />
-                                <span class="input-group-addon">
-                                    <span class="glyphicon glyphicon-calendar"></span>
-                                </span>
-                            </div>
-                        </div>
-                        <div id="stationsDropDown" ></div>
-                    </div>
-                </div>
-                <input type="submit" class="btn btn-primary" value="Submit" onclick="displayselection()">
+    <div class='col-md-5'>
+        <div class="form-group">
+            <p> Pick-up date </p>
+            <div class='input-group date' id='datetimepicker1'>
+                <input type='text' class="form-control" />
+                <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
             </div>
+            <p> Pick-up location </p>
+            <div id="stationsPickUp" ></div>
         </div>
     </div>
-</div>    
-
+    <div class='col-md-5'>
+        <div class="form-group">
+            <p> Drop-off date </p>
+            <div class='input-group date' id='datetimepicker2'>
+                <input type='text' class="form-control" />
+                <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+            </div>
+        </div>
+        <p> Drop-off station </p>
+        <div id="stationsDropOff" ></div>
+        <br>
+        <input type="submit" class="btn btn-primary" value="Submit" onclick="displayselection()">
+    </div>
+</div>
     
 <script>
 
-// date and time picker
- $(function () {
-    $('#datetimepicker1').datetimepicker();
- });
-
     
+// date and time picker limited to the next 5 days to match weather forecast
+var todayDate = new Date().getDate();
+
+$(function () {
+    $('#datetimepicker1').datetimepicker({
+        minDate: new Date(),
+        maxDate: new Date(new Date().setDate(todayDate + 5)),
+        disabledHours: [1, 2, 3, 4],
+        disabledTimeIntervals: [moment({ h: 0, m: 30 }), moment({ h: 5 })],
+        stepping: 15
+});
+    $('#datetimepicker2').datetimepicker({
+        useCurrent: false, 
+        maxDate: new Date(new Date().setDate(todayDate + 5)),
+        disabledHours: [1, 2, 3, 4],
+        disabledTimeIntervals: [moment({ h: 0, m: 30 }), moment({ h: 5 })],
+        stepping: 15
+    });
+    $("#datetimepicker1").on("dp.change", function (e) {
+        $('#datetimepicker2').data("DateTimePicker").minDate(e.date);
+    });
+    $("#datetimepicker2").on("dp.change", function (e) {
+        $('#datetimepicker1').data("DateTimePicker").maxDate(e.date);
+    });
+});
+    
+  
 // function that displays user's selection after submitting request
 function displayselection() {
     // pass date time value to a variable
-    var selectedtime = $('#datetimepicker1').data("DateTimePicker").date();
+    var selectedPickUpTime = $('#datetimepicker1').data("DateTimePicker").date();
+    var selectedDropOffTime = $('#datetimepicker2').data("DateTimePicker").date(); 
     
-    if (selectedtime) {
+    if (selectedPickUpTime) {
     //convert time in unix format
-    var selectedtimeUNIX = selectedtime.unix();
+    var selectedPickUpTimeUNIX = selectedPickUpTime.unix();
+    var selectedDropOffTimeUNIX = selectedDropOffTime.unix();
     }
+
     // pass selected station
-    var selectedstation = $('#stationMenu').val();
+    var selPickUpStation = $('#pickupstation').val();
+    var selDropOffStation = $('#dropoffstation').val();
+    
     // get address of main page
     var host = window.location.href;
     // add station
-    host += selectedstation
+    host += selPickUpStation
     host += "/"
     // append appropriate timestamp
-    host += selectedtimeUNIX;
+    host += selectedPickUpTimeUNIX;
     
     //navigate to app route for station/time
     window.location.replace(host)
@@ -126,34 +162,63 @@ function dropDown(obj){
         }}
         // this will sort the array in alphabetical order
         stationList.sort();
-    //creating the selection drop down menu with a loop that iterates thourgh the array
-    var selStation = "<select id=stationMenu>"
-    selStation += "<option value=" + 'selStation' + ">"+ 'Select Station:' +"</option>"
-    for (i=0; i <stationList.length; i++){
-        selStation += "<option value=\""+stationList[i]+"\">"+ stationList[i] + "</option>"
-        }
-    selStation += "</select>"
     
-    document.getElementById("stationsDropDown").innerHTML = selStation;
+    //creating the selection drop down menu with a loop that iterates thourgh the array
+    var selPickUpStation = "<select id=pickupstation>"
+    selPickUpStation += "<option value=" + 'selStation' + ">"+ 'Select Station:' +"</option>"
+    for (i=0; i <stationList.length; i++){
+        selPickUpStation += "<option value=\""+stationList[i]+"\">"+ stationList[i] + "</option>"
+        }
+    selPickUpStation += "</select>"
+    
+    document.getElementById("stationsPickUp").innerHTML = selPickUpStation;
+   
+    var selDropOffStation = "<select id=dropoffstation>"
+    selDropOffStation += "<option value=" + 'selStation' + ">"+ 'Select Station:' +"</option>"
+    for (i=0; i <stationList.length; i++){
+        selDropOffStation += "<option value=\""+stationList[i]+"\">"+ stationList[i] + "</option>"
+        }
+    selDropOffStation += "</select>"    
+    
+    document.getElementById("stationsDropOff").innerHTML = selDropOffStation;
     
 }    
+
 
 //function that displays stations and info on map
 function displayStation(obj) {
     // variable that contains station information
     var stations = obj;
-    
+    // variable that contains circle color 
+    var circleColor;
     //static infoWindow for all your markers
     var infowindow = new google.maps.InfoWindow(); 
     // loop that iterates through the object and extract information
     for(var i = 0; i < stations.length; i++){
-      var loc = new google.maps.LatLng(stations[i].stationLat, stations[i].stationLong);
-      var content = '<div><p> Station Name:  ' + stations[i].stationName + '</p><p> Total bike stands:  ' + stations[i].stationStands + '</p><p> Credit Card accepted:  ' + stations[i].stationBanking + '</p><p> Available bike stands:  ' + stations[i].stationStdsAvailable + '</p><p> Available bikes: ' + stations[i].stationBikesAvailable + '</p></div>';
-      var marker = new google.maps.Marker({
-         position: loc,
-         map: map,
-         title: stations[i].name
-      });
+        var loc = new google.maps.LatLng(stations[i].stationLat, stations[i].stationLong);
+        var content = '<div><p> Station Name:  ' + stations[i].stationName + '</p><p> Total bike stands:  ' + stations[i].stationStands + '</p><p> Credit Card accepted:  ' + stations[i].stationBanking + '</p><p> Available bike stands:  ' + stations[i].stationStdsAvailable + '</p><p> Available bikes: ' + stations[i].stationBikesAvailable + '</p></div>';
+        var marker = new google.maps.Marker({
+             position: loc,
+             map: map,
+             title: stations[i].name});
+        
+        //base color of the circle on the marker on bike availability
+        if (stations[i].stationBikesAvailable == 0) { 
+               circleColor = '#ff0000'}
+        else if (stations[i].stationBikesAvailable <=3 ) { 
+               circleColor = '#fff010'}
+        else {
+            circleColor = '#13f72a'};
+        
+        //plot a circle on each bike location
+        var bikeCircle = new google.maps.Circle({
+            strokeWeight: 0,
+            fillColor: circleColor,
+            fillOpacity: 0.7,
+            map: map,
+            center: loc,
+            radius: 50 + stations[i].stationBikesAvailable
+        });
         
     google.maps.event.addListener(marker,'click', (function(marker,content,infowindow){ 
         return function() {
@@ -162,7 +227,9 @@ function displayStation(obj) {
         };
     })(marker,content,infowindow)); 
         
-    }     
+    }    
+    
+    
 }
 }
 

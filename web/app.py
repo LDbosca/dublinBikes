@@ -47,11 +47,18 @@ def stations():
     bds = DBjson.fetchFromDB(host,port,dbname,user,password,bikesQuery)
     return jsonify(bds)
 
-@app.route('/<bikeStation>/<int:unixTime>')
-def forecast(unixTime,bikeStation):
+@app.route('/<bikeStation>/<int:unixTime>/<dropOffStation>/<int:dropOffTime>')
+def forecast(unixTime,bikeStation,dropOffStation,dropOffTime):
     wds = DBjson.fetchFromDB(host,port,dbname,user,password,weatherQuery)
     bds = DBjson.fetchFromDB(host,port,dbname,user,password,bikesQuery)
-    futureWeatherJson = DBjson.matchWeatherForecast(unixTime) #json containing forecast for the date/time entered
+    #json containing forecast for the date/time entered
+    futureWeatherJson = DBjson.matchWeatherForecast(unixTime)
+
+    #predicted bike availability for getting a bike - availableBikesPickup[0] is the number of bikes available
+    availableBikesPickup = predictionGenerator.generatePrediction(bikeStation,unixTime)
+
+    #predicted stand availability for dropping off bike - availableBikesDropOff[1] is the number of bikes available
+    availableBikesDropOff = predictionGenerator.generatePrediction(dropOffStation,dropOffTime)
     stringTime = datetime.datetime.utcfromtimestamp(unixTime) #convert unixTime into datetime object
     stringJustTime = stringTime.strftime("%H:%M:%S") #convert time object into string for webpage, graphing.
     stringTime = stringTime.strftime("%m/%d/%Y, %H:%M:%S") #convert datetime object into string for webpage

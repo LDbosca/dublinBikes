@@ -63,8 +63,7 @@ def forecast(unixTime,bikeStation,dropOffStation,dropOffTime):
     
     #predicted stand availability for dropping off bike - availableBikesDropOff[1] is the number of bikes available
     availableBikesDropOff = predictionGenerator.generatePrediction(dropOffStation,dropOffTime)
-    
-    
+
     stringTime = datetime.datetime.utcfromtimestamp(unixTime) #convert unixTime into datetime object
     stringJustTime = stringTime.strftime("%H:%M:%S") #convert time object into string for webpage, graphing.
     stringTime = stringTime.strftime("%m/%d/%Y, %H:%M:%S") #convert datetime object into string for webpage

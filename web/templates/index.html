@@ -127,6 +127,12 @@ function displayselection() {
     host += "/"
     // append appropriate timestamp
     host += selectedPickUpTimeUNIX;
+    // append drop off station
+    host += "/"
+    host += selDropOffStation
+    // append appropriate drop off timestamp
+    host += "/"
+    host += selectedDropOffTimeUNIX
     
     //navigate to app route for station/time
     window.location.replace(host)

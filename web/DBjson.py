@@ -9,7 +9,7 @@ Created on Wed Feb 27 11:56:35 2019
 import pymysql
 import time
 import requests
-from flask import g
+
 
 def fetchFromDB(host,port,dbname,user,password,query):
     '''

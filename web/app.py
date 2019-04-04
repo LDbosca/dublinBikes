@@ -1,10 +1,11 @@
 from flask import Flask, render_template, jsonify
 from flask_googlecharts import GoogleCharts, BarChart
 import DBjson
+import predictionGenerator
 import threading
 import datetime
 from flask_cors import CORS
-#from flask_sqlalchemy import SQLAlchemy
+
 
 #login details for AWS RDS DB
 host="dbproject.cqkm9hf5jptc.eu-west-1.rds.amazonaws.com"
@@ -13,10 +14,13 @@ dbname="dublinbikesDB"
 user="user"
 password="dublinbikes"
 
+#queries to fetch latest bike/weather info
 bikesQuery = "SELECT * FROM dublinBikesInfo WHERE dateTime=(SELECT MAX(dateTIME) FROM dublinBikesInfo);"
 weatherQuery = "SELECT * FROM weatherInfo WHERE dateTime=(SELECT MAX(dateTime) FROM weatherInfo);"
 
 forecastURL='http://api.openweathermap.org/data/2.5/forecast?q=Dublin,ie&units=metric&APPID=7c4d32959a99216eeb3c99efc8000278'
+
+
 
 #start updateWeatherInfo as background process - forecast data is stored in global variable called fds
 APIthread = threading.Thread(name='updateWeatherForecast', target=DBjson.updateWeatherForecast,args=[forecastURL,1200])
@@ -47,11 +51,20 @@ def stations():
     bds = DBjson.fetchFromDB(host,port,dbname,user,password,bikesQuery)
     return jsonify(bds)
 
-@app.route('/<bikeStation>/<int:unixTime>')
-def forecast(unixTime,bikeStation):
+@app.route('/<bikeStation>/<int:unixTime>/<dropOffStation>/<int:dropOffTime>')
+def forecast(unixTime,bikeStation,dropOffStation,dropOffTime):
     wds = DBjson.fetchFromDB(host,port,dbname,user,password,weatherQuery)
     bds = DBjson.fetchFromDB(host,port,dbname,user,password,bikesQuery)
-    futureWeatherJson = DBjson.matchWeatherForecast(unixTime) #json containing forecast for the date/time entered
+     #json containing forecast for the date/time entered
+    futureWeatherJson = DBjson.matchWeatherForecast(unixTime)
+    
+    #predicted bike availability for getting a bike - availableBikesPickup[0] is the number of bikes available
+    availableBikesPickup = predictionGenerator.generatePrediction(bikeStation,unixTime)
+    
+    #predicted stand availability for dropping off bike - availableBikesDropOff[1] is the number of bikes available
+    availableBikesDropOff = predictionGenerator.generatePrediction(dropOffStation,dropOffTime)
+    
+    
     stringTime = datetime.datetime.utcfromtimestamp(unixTime) #convert unixTime into datetime object
     stringJustTime = stringTime.strftime("%H:%M:%S") #convert time object into string for webpage, graphing.
     stringTime = stringTime.strftime("%m/%d/%Y, %H:%M:%S") #convert datetime object into string for webpage

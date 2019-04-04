@@ -93,8 +93,6 @@
         </div>
     </div>
 
-
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 
@@ -163,7 +161,108 @@
 
             //navigate to app route for station/time
             window.location.replace(host)
+    
+<script>
+// date and time picker limited to the next 5 days to match weather forecast
+var todayDate = new Date().getDate();
 
+$(function () {
+    $('#datetimepicker1').datetimepicker({
+        minDate: new Date(),
+        maxDate: new Date(new Date().setDate(todayDate + 5)),
+        disabledHours: [1, 2, 3, 4],
+        disabledTimeIntervals: [moment({ h: 0, m: 30 }), moment({ h: 5 })],
+        stepping: 15
+});
+    $('#datetimepicker2').datetimepicker({
+        useCurrent: false, 
+        maxDate: new Date(new Date().setDate(todayDate + 5)),
+        disabledHours: [1, 2, 3, 4],
+        disabledTimeIntervals: [moment({ h: 0, m: 30 }), moment({ h: 5 })],
+        stepping: 15
+    });
+    $("#datetimepicker1").on("dp.change", function (e) {
+        $('#datetimepicker2').data("DateTimePicker").minDate(e.date);
+    });
+    $("#datetimepicker2").on("dp.change", function (e) {
+        $('#datetimepicker1').data("DateTimePicker").maxDate(e.date);
+    });
+});
+    
+  
+// function that displays user's selection after submitting request
+function displayselection() {
+    // pass date time value to a variable
+    var selectedPickUpTime = $('#datetimepicker1').data("DateTimePicker").date();
+    var selectedDropOffTime = $('#datetimepicker2').data("DateTimePicker").date(); 
+    
+    if (selectedPickUpTime) {
+    //convert time in unix format
+    var selectedPickUpTimeUNIX = selectedPickUpTime.unix();
+    var selectedDropOffTimeUNIX = selectedDropOffTime.unix();
+    }
+
+    // pass selected station
+    var selPickUpStation = $('#pickupstation').val();
+    var selDropOffStation = $('#dropoffstation').val();
+    
+    // get address of main page
+    var host = window.location.href;
+    // add station
+    host += selPickUpStation
+    host += "/"
+    // append appropriate timestamp
+    host += selectedPickUpTimeUNIX;
+    // append drop off station
+    host += "/"
+    host += selDropOffStation
+    // append appropriate drop off timestamp
+    host += "/"
+    host += selectedDropOffTimeUNIX
+    
+    //navigate to app route for station/time
+    window.location.replace(host)
+
+}
+    
+function myMap() {
+//The mapProp variable defines the properties for the map.
+var mapProp= {
+  center:new google.maps.LatLng(53.350140, -6.266155), //center in Dublin
+  zoom:13,
+};
+//creates a new map inside the <div> element using the parameters that are passed (mapProp).
+var map = new google.maps.Map(document.getElementById("googleMap"),mapProp);
+
+// ROOT is the location of our flask app
+ROOT = window.location.origin; 
+    
+//using jQuery to import JSON file from flask and pass it to the function 
+$.getJSON(ROOT + '/stations', function (data) {
+    displayStation(data);
+    dropDown(data);
+});
+
+// function that populates dropdown menu with stations
+function dropDown(obj){
+
+    var stations = obj;
+    // creating an array that will contain all Countries
+    var stationList = [];
+    // loop that iterates thtough the object
+    // pushing Countries into array after checking if they have been already added
+    for (var i=0; i <stations.length; i++) {  
+        if (stationList.indexOf(stations[i].stationName) == -1){
+            stationList.push(stations[i].stationName)
+        }}
+        // this will sort the array in alphabetical order
+        stationList.sort();
+    
+    //creating the selection drop down menu with a loop that iterates thourgh the array
+    var selPickUpStation = "<select id=pickupstation>"
+    selPickUpStation += "<option value=" + 'selStation' + ">"+ 'Select Station:' +"</option>"
+    for (i=0; i <stationList.length; i++){
+        selPickUpStation += "<option value=\""+stationList[i]+"\">"+ stationList[i] + "</option>"
         }
 
         function myMap() {

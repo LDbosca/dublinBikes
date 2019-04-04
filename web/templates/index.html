@@ -135,10 +135,12 @@
             });
         });
         // function that displays user's selection after submitting request
+        // function that displays user's selection after submitting request
         function displayselection() {
             // pass date time value to a variable
             var selectedPickUpTime = $('#datetimepicker1').data("DateTimePicker").date();
             var selectedDropOffTime = $('#datetimepicker2').data("DateTimePicker").date();
+
             if (selectedPickUpTime) {
                 //convert time in unix format
                 var selectedPickUpTimeUNIX = selectedPickUpTime.unix();
@@ -147,6 +149,7 @@
             // pass selected station
             var selPickUpStation = $('#pickupstation').val();
             var selDropOffStation = $('#dropoffstation').val();
+
             // get address of main page
             var host = window.location.href;
             // add station
@@ -154,9 +157,17 @@
             host += "/"
             // append appropriate timestamp
             host += selectedPickUpTimeUNIX;
+            // append drop off station
+            host += "/"
+            host += selDropOffStation
+            // append appropriate drop off timestamp
+            host += "/"
+            host += selectedDropOffTimeUNIX
+
             //navigate to app route for station/time
             window.location.replace(host)
         }
+
         function myMap() {
             //The mapProp variable defines the properties for the map.
             var mapProp = {
@@ -245,6 +256,7 @@
                 }
             }
         }
+
     </script>
 
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDMsv7Vw1OJPpTQ2rb6NtrjYykltKPbti4&callback=myMap">

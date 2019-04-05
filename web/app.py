@@ -1,5 +1,4 @@
 from flask import Flask, render_template, jsonify
-from flask_googlecharts import GoogleCharts, BarChart
 import DBjson
 import predictionGenerator
 import threading
@@ -20,8 +19,6 @@ weatherQuery = "SELECT * FROM weatherInfo WHERE dateTime=(SELECT MAX(dateTime) F
 
 forecastURL='http://api.openweathermap.org/data/2.5/forecast?q=Dublin,ie&units=metric&APPID=7c4d32959a99216eeb3c99efc8000278'
 
-
-
 #start updateWeatherInfo as background process - forecast data is stored in global variable called fds
 APIthread = threading.Thread(name='updateWeatherForecast', target=DBjson.updateWeatherForecast,args=[forecastURL,1200])
 APIthread.start()
@@ -30,19 +27,13 @@ APIthread.start()
 
 app = Flask(__name__)
 #CORS prevents Cross-Origin errors due to the fact that json is local
-# CORS(app)
-# Setup GoogleCharts instance
-charts = GoogleCharts(app)
-chartDisplay=False
+CORS(app)
 
 @app.route('/')
 def index():
     wds = DBjson.fetchFromDB(host,port,dbname,user,password,weatherQuery)
     bds = DBjson.fetchFromDB(host,port,dbname,user,password,bikesQuery)
-    AvailabilityChart = BarChart("AvailabilityChart", options={"title": "Predicted Bike Availability",
-                                                  "width": 700,
-                                                  "height": 300, "legend":'none'}) # Need to setup empty chart to avoid error in html.
-    charts.register(AvailabilityChart) # Allows the chart to be called from html file.
+
     
     return render_template('index.html', wds=wds, bds=bds)
 
@@ -61,7 +52,7 @@ def forecast(unixTime,bikeStation,dropOffStation,dropOffTime):
     #predicted bike availability for getting a bike - availableBikesPickup[0] is the number of bikes available
     availableBikesPickup = predictionGenerator.generatePrediction(bikeStation,unixTime)
     
-    #predicted stand availability for dropping off bike - availableBikesDropOff[1] is the number of bikes available
+    #predicted stand availability for dropping off bike - availableBikesDropOff[1] is the number of stations available
     availableBikesDropOff = predictionGenerator.generatePrediction(dropOffStation,dropOffTime)
     
     
@@ -69,16 +60,35 @@ def forecast(unixTime,bikeStation,dropOffStation,dropOffTime):
     stringJustTime = stringTime.strftime("%H:%M:%S") #convert time object into string for webpage, graphing.
     stringTime = stringTime.strftime("%m/%d/%Y, %H:%M:%S") #convert datetime object into string for webpage
 
-#    Creates graph and populates
-    AvailabilityChart = BarChart("AvailabilityChart", options={"title": "Predicted Bike Availability",
-                                                  "width": 700,
-                                                  "height": 300, "legend":'none'})
-    AvailabilityChart.add_column("string", "PredictedTime")
-    AvailabilityChart.add_column("number", "Predicted Available Bikes")
-    AvailabilityChart.add_rows([[stringJustTime, 20],[stringJustTime, 10], [stringJustTime, 30]]) # These values will be pulled from the ML model.
-    charts.register(AvailabilityChart)
-    
-    return render_template('index.html', futureWeatherJson=futureWeatherJson,forecast=True,wds=wds,bds=bds,bikeStation=bikeStation,stringTime=stringTime)
+    # we also predict the avail bikes and stands +/- 1 hour of the selected time to display the data in a graph
+    # unix timestamp is in second so to add/reduce time we simply use the number of seconds
+    pickUpTimeMin30m = unixTime - 1800
+    pickUpTimeMin1h = unixTime - 3600
+    pickUpTimePlus30m = unixTime + 1800
+    pickUpTimePlus1h = unixTime + 3600
+
+    dropOffTimeMin30m = dropOffTime - 1800
+    dropOffTimeMin1h = dropOffTime - 3600
+    dropOffTimePlus30m = dropOffTime + 1800
+    dropOffTimePlus1h = dropOffTime + 3600
+
+    #predict for the additionl times
+    availableBikesPickupMin30m = predictionGenerator.generatePrediction(bikeStation,pickUpTimeMin30m)
+    availableBikesPickupMin1h = predictionGenerator.generatePrediction(bikeStation,pickUpTimeMin1h)
+    availableBikesPickupPlus30m = predictionGenerator.generatePrediction(bikeStation,pickUpTimePlus30m)
+    availableBikesPickupPlus1h = predictionGenerator.generatePrediction(bikeStation,pickUpTimePlus1h)
+
+    availableBikesDropOffMin30m = predictionGenerator.generatePrediction(bikeStation,dropOffTimeMin30m)
+    availableBikesDropOffMin1h = predictionGenerator.generatePrediction(bikeStation,dropOffTimeMin1h)
+    availableBikesDropOffPlus30m = predictionGenerator.generatePrediction(bikeStation,dropOffTimePlus30m)
+    availableBikesDropOffPlus1h = predictionGenerator.generatePrediction(bikeStation,dropOffTimePlus1h)
+
+    availBikes = [availableBikesPickupMin30m, availableBikesPickupMin1h, availableBikesPickup, availableBikesPickupPlus30m, availableBikesPickupPlus1h]
+    availStnds = [availableBikesDropOffMin30m, availableBikesDropOffMin1h,availableBikesDropOff, availableBikesDropOffPlus30m, availableBikesDropOffPlus1h]
+
+    # render_template('index.html', futureWeatherJson=futureWeatherJson,forecast=True,wds=wds,bds=bds,bikeStation=bikeStation,stringTime=stringTime)
+
+    return jsonify(availBikes, availStnds, futureWeatherJson)
 
 if __name__ == "__main__":
     app.run(debug=True)

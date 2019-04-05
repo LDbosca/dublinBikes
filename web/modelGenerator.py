@@ -64,10 +64,10 @@ def generateModel(host,port,dbname,user,password,station,weekday=True):
     
     if weekday==True:
         #drop Sat/Sunday
-        df = df.drop(df[df.weekday >5 ].index)
+        df = df.drop(df[df.weekday > 4 ].index)
     else:
         #drop Mon-Fri
-        df = df.drop(df[df.weekday < 6].index)
+        df = df.drop(df[df.weekday < 5].index)
         
     #drop unused columns
     df = df[['dateTime','time','stationBikesAvailable','rain','Monday',

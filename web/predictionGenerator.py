@@ -27,7 +27,7 @@ def generatePrediction(stationName,unixTime):
     #create datetime object from unix time
     predictionDate = datetime.fromtimestamp(unixTime)
     #fetch weather data for requested time
-    futureWeatherJson = DBjson.matchWeatherForecast(1554368925)
+    futureWeatherJson = DBjson.matchWeatherForecast(unixTime)
     
     
     #conditionally create values to put in dataframe for prediction

@@ -71,11 +71,14 @@ def generateModel(host,port,dbname,user,password,station,weekday=True):
         
     #drop unused columns
     df = df[['dateTime','time','stationBikesAvailable','rain','Monday',
-       'Tuesday', 'Wednesday', 'Thursday', 'Friday']]
+       'Tuesday', 'Wednesday', 'Thursday', 'Friday','Saturday','Sunday']]
 
     
     #features to be considered
-    features = ['time','rain','Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
+    if weekday==True:
+        features = ['time','rain','Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
+    else:
+        features = ['time','rain','Saturday','Sunday']
     
     #input values
     x = df[features]
@@ -104,6 +107,9 @@ def generateModel(host,port,dbname,user,password,station,weekday=True):
     
     with open(filename,'wb') as handle:
         pickle.dump(model,handle,pickle.HIGHEST_PROTOCOL)
+
+
+
 
 
 def generateAllModels(host,port,dbname,user,password):

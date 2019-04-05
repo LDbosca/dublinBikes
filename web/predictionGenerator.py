@@ -85,3 +85,4 @@ def generatePrediction(stationName,unixTime):
     
     #return tuple containing available bikes and available stands
     return ans
+

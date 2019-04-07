@@ -28,10 +28,92 @@
     <header style="background-color: #F8F3F6; font-family: 'Raleway', sans-serif;">
         <h1 class="text-center text-danger font-weight-bold mt-2 mb-2 ml-2 mr-2" id="title">On Yer Bike Forecaster</h1>
     </header>
-    
+
     <div id="googleMap" style="width:100%;height:500px;"></div>
-    <div id="legend"><h3>Legend</h3></div>
+    <div id="legend">
+        <h3>Legend</h3>
+    </div>
     <div class="text-center mt-2 mb-2 ml-2 mr-2 w-auto container-fluid">
+        <div class="row justify-content-xl-center" style="background-color:#A1BBD0;margin-top: 40px">
+
+<!--Previous datetime form, just leaving in for reference until I sort our the value handovers-->
+<!--
+            <div class="col-sm-6" id="departDatetime" style="padding: 20px 20px 50px">
+                <div class="form-group">
+                    <h3> Pick-up date and time</h3>
+                    <div class='input-group date' id='datetimepicker1'>
+                        <input type='text' class="form-control" />
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                        </span>
+                    </div>
+
+                    <h3> Pick-up location </h3>
+                    <div id="stationsPickUp"></div>
+                </div>
+            </div>
+            <div class="col-sm-6" id="arriveDatetime" style="padding: 20px 20px 50px">
+                <div class="form-group">
+                    <h3> Drop-off time </h3>
+                    <div class='input-group date' id='datetimepicker2'>
+                        <input type='text' class="form-control" />
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-time"></span>
+                        </span>
+                    </div>
+                </div>
+                <h3> Drop-off station </h3>
+                <div id="stationsDropOff"></div>
+                <br>
+                <input type="submit" class="btn btn-primary" value="Submit" onclick="displayselection()">
+            </div>
+-->
+
+            <div class='col-sm-6'>
+                <div class="form-group">
+                    <h3> Pick-up date and time</h3>
+                    <div class='input-group date' id='datetimepicker1'>
+                        <input type='text' class="form-control" />
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                        </span>
+                    </div>
+                    <h3> Pick-up location </h3>
+                    <div id="stationsPickUp"></div>
+                </div>
+            </div>
+            <script type="text/javascript">
+                $(function() {
+                    $('#datetimepicker1').datetimepicker();
+                });
+
+            </script>
+
+            <div class='col-sm-6'>
+                <div class="form-group">
+                    <h3> Same Day Drop-off Time</h3>
+                    <div class='input-group date' id='datetimepicker3'>
+                        <input type='text' class="form-control" />
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-time"></span>
+                        </span>
+                    </div>
+                    <h3> Drop-off station </h3>
+                    <div id="stationsDropOff"></div>
+                    <br>
+                    <input type="submit" class="btn btn-primary" value="Submit" onclick="displayselection()">
+                </div>
+            </div>
+            <script type="text/javascript">
+                $(function() {
+                    $('#datetimepicker3').datetimepicker({
+                        format: 'LT'
+                    });
+                });
+
+            </script>
+
+        </div>
         <div class="row justify-content-xl-center">
             <div class="col-md-6" id="currentWeather">
                 <div id="weather" style="font-family: 'Raleway', sans-serif;">
@@ -45,43 +127,17 @@
                     {% endif %}
                 </div>
             </div>
+            <div class="col-md-6" id="forecastedWeather" style="font-family: 'Raleway', sans-serif;"></div>
         </div>
-        <div class="row justify-content-xl-center bg-light">
-            <div class="col-md-6" id="departDatetime">
-                <div class="form-group">
-                    <p> Pick-up date and time</p>
-                    <div class='input-group date' id='datetimepicker1'>
-                        <input type='text' class="form-control" />
-                        <span class="input-group-addon">
-                            <span class="glyphicon glyphicon-calendar"></span>
-                        </span>
-                    </div>
-                    
-                    <p> Pick-up location </p>
-                    <div id="stationsPickUp"></div>
-                </div>
-            </div>
-            <div class="col-md-6" id="arriveDatetime">
-                <div class="form-group">
-                    <p> Drop-off time </p>
-                    <div class='input-group date' id='datetimepicker2'>
-                        <input type='text' class="form-control" />
-                        <span class="input-group-addon">
-                            <span class="glyphicon glyphicon-time"></span>
-                        </span>
-                    </div>
-                </div>
-                <p> Drop-off station </p>
-                <div id="stationsDropOff"></div>
-                <br>
-                <input type="submit" class="btn btn-primary" value="Submit" onclick="displayselection()">
-            </div>
+        <div class="row justify-content-xl-center">
+            <div class="col-md-6" id="departStnGraph"> </div>
+            <div class="col-md-6" id="arriveStnGraph"> </div>
         </div>
     </div>
-    
-    <div id="forecastedWeather" style="font-family: 'Raleway', sans-serif;"></div>
-    <div id="departStnGraph">  </div>
-    <div id="arriveStnGraph">  </div>  
+
+
+
+
 
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
@@ -91,7 +147,7 @@
     <script>
         // date and time picker limited to the next 5 days to match weather forecast
         var todayDate = new Date().getDate();
-        
+
         $(function() {
             $('#datetimepicker1').datetimepicker({
                 minDate: new Date(),
@@ -123,7 +179,7 @@
                 $('#datetimepicker1').data("DateTimePicker").maxDate(e.date);
             });
         });
-        
+
         // this function extracts hours and minute in AM/PM format from unix timestamp
         function getTimeFromDate(timestamp) {
             var date = new Date(timestamp);
@@ -132,17 +188,17 @@
             var ampm = hours >= 12 ? 'pm' : 'am';
             hours = hours % 12;
             hours = hours ? hours : 12; // the hour '0' should be '12'
-            minutes = minutes < 10 ? '0'+minutes : minutes;
+            minutes = minutes < 10 ? '0' + minutes : minutes;
             var strTime = hours + ':' + minutes + ' ' + ampm;
             return strTime;
         }
-        
+
         // function that displays user's selection after submitting request
         function displayselection() {
             // pass date time value to a variable
             var selectedPickUpTime = $('#datetimepicker1').data("DateTimePicker").date();
-            var selectedDropOffTime = $('#datetimepicker2').data("DateTimePicker").date();
-            
+            var selectedDropOffTime = $('#datetimepicker3').data("DateTimePicker").date();
+
             if (selectedPickUpTime) {
                 //convert time in unix format
                 var selectedPickUpTimeUNIX = selectedPickUpTime.unix();
@@ -153,93 +209,102 @@
             // pass selected station
             var selPickUpStation = $('#pickupstation').val();
             var selDropOffStation = $('#dropoffstation').val();
-            
+
             // get forecasted data in JSON file from flask 
-            $.getJSON(ROOT + '/' + selPickUpStation + '/' + selectedPickUpTimeUNIX + '/' + selDropOffStation + '/' + selectedDropOffTimeUNIX , function(data) {
+            $.getJSON(ROOT + '/' + selPickUpStation + '/' + selectedPickUpTimeUNIX + '/' + selDropOffStation + '/' + selectedDropOffTimeUNIX, function(data) {
                 displayChart(data);
             });
 
-        function displayChart(obj){
-            var data = obj;
-            console.log(data);
-            
-            // extract forecasted weather info
-            var forecastedWeather = obj[2]['weather'][0]['description'];
-            var forecastedTemperature = obj[2]['main']['temp'];
-            var weatherIcon = obj[2]['weather'][0]['icon'];
-            // display forecasted weather info
-            var weather = '<h2>Forecasted Weather Conditions</h2>' + '<p>The forecasted weather is:  ' + forecastedWeather + '<br>' + 'The forecasted temperature is: ' + forecastedTemperature + ' degrees centigrade <br>' + '</p>' + '<img src="http://openweathermap.org/img/w/' + weatherIcon + '.png">'
-            document.getElementById("forecastedWeather").innerHTML = weather;
-                
-            // extract avail bikes forecasted
-            var availableBikesPickupMin30m = obj[0][0][0];
-            var availableBikesPickupMin1h = obj[0][1][0];
-            var availableBikesPickup = obj[0][2][0];
-            var availableBikesPickupPlus30m = obj[0][3][0];
-            var availableBikesPickupPlus1h = obj[0][4][0];
-            
-            // extract avail stands forecasted
-            var availableBikesDropOffMin30m = obj[1][0][1];
-            var availableBikesDropOffMin1h = obj[1][1][1];
-            var availableBikesDropOff = obj[1][2][1];
-            var availableBikesDropOffPlus30m = obj[1][3][1];
-            var availableBikesDropOffPlus1h = obj[1][4][1];
-            
-            // extract hours from unix timestamp
-            var pickUpHour = getTimeFromDate(selectedPickUpTime);
-            var dropOffHour = getTimeFromDate(selectedDropOffTime);
-            
-            // draw google charts using extracted data
-            google.charts.load('current', {'packages':['corechart']});
-            google.charts.setOnLoadCallback(drawChartPickUp);
-            google.charts.setOnLoadCallback(drawChartDropOff);
-            
-            function drawChartPickUp() {
-            var dataPickUp = google.visualization.arrayToDataTable([
-              ['Hour', 'Bikes'],
-              ['- 1h',  availableBikesPickupMin1h],
-              ['- 30m',  availableBikesPickupMin30m],
-              [pickUpHour,  availableBikesPickup],
-              ['+ 30m',  availableBikesPickupPlus30m],
-              ['+ 1h',  availableBikesPickupPlus1h ]
-            ]);
+            function displayChart(obj) {
+                var data = obj;
+                console.log(data);
 
-            var options = {
-              title: 'Available Bikes',
-              curveType: 'function',
-              legend: { position: 'bottom' },
-              width :400,
-              height:300
-            };
+                // extract forecasted weather info
+                var forecastedWeather = obj[2]['weather'][0]['description'];
+                var forecastedTemperature = obj[2]['main']['temp'];
+                var weatherIcon = obj[2]['weather'][0]['icon'];
+                // display forecasted weather info
+                var weather = '<h2>Forecasted Weather Conditions</h2>' + '<p>The forecasted weather is:  ' + forecastedWeather + '<br>' + 'The forecasted temperature is: ' + forecastedTemperature + ' degrees centigrade <br>' + '</p>' + '<img src="http://openweathermap.org/img/w/' + weatherIcon + '.png">'
+                document.getElementById("forecastedWeather").innerHTML = weather;
 
-            var pickUpChart = new google.visualization.LineChart(document.getElementById('departStnGraph'));
+                // extract avail bikes forecasted
+                var availableBikesPickupMin30m = obj[0][0][0];
+                var availableBikesPickupMin1h = obj[0][1][0];
+                var availableBikesPickup = obj[0][2][0];
+                var availableBikesPickupPlus30m = obj[0][3][0];
+                var availableBikesPickupPlus1h = obj[0][4][0];
 
-            pickUpChart.draw(dataPickUp, options);
-      }
-            function drawChartDropOff() {
-            var dataDropOff = google.visualization.arrayToDataTable([
-              ['Hour', 'Stands'],
-              ['- 1h',  availableBikesDropOffMin1h],
-              ['- 30m',  availableBikesDropOffMin30m],
-              [dropOffHour,  availableBikesDropOff],
-              ['+ 30m',  availableBikesDropOffPlus30m],
-              ['+ 1h',  availableBikesDropOffPlus1h]
-            ]);
+                // extract avail stands forecasted
+                var availableBikesDropOffMin30m = obj[1][0][1];
+                var availableBikesDropOffMin1h = obj[1][1][1];
+                var availableBikesDropOff = obj[1][2][1];
+                var availableBikesDropOffPlus30m = obj[1][3][1];
+                var availableBikesDropOffPlus1h = obj[1][4][1];
 
-            var options = {
-              title: 'Available Stands',
-              curveType: 'function',
-              legend: { position: 'bottom' },
-              width :400,
-              height:300
-            };
+                // extract hours from unix timestamp
+                var pickUpHour = getTimeFromDate(selectedPickUpTime);
+                var dropOffHour = getTimeFromDate(selectedDropOffTime);
 
-            var dropOffChart = new google.visualization.LineChart(document.getElementById('arriveStnGraph'));
+                // draw google charts using extracted data
+                google.charts.load('current', {
+                    'packages': ['corechart']
+                });
+                google.charts.setOnLoadCallback(drawChartPickUp);
+                google.charts.setOnLoadCallback(drawChartDropOff);
 
-            dropOffChart.draw(dataDropOff, options);
-         }       
-    } 
-}
+                function drawChartPickUp() {
+                    var dataPickUp = google.visualization.arrayToDataTable([
+                        ['Hour', 'Bikes'],
+                        ['- 1h', availableBikesPickupMin1h],
+                        ['- 30m', availableBikesPickupMin30m],
+                        [pickUpHour, availableBikesPickup],
+                        ['+ 30m', availableBikesPickupPlus30m],
+                        ['+ 1h', availableBikesPickupPlus1h]
+                    ]);
+
+                    var options = {
+                        title: 'Pickup Station Available Bikes',
+                        curveType: 'function',
+                        legend: {
+                            position: 'bottom'
+                        },
+                        width: 800,
+                        height: 300,
+                        colors: ['#F26968']
+                    };
+
+                    var pickUpChart = new google.visualization.LineChart(document.getElementById('departStnGraph'));
+
+                    pickUpChart.draw(dataPickUp, options);
+                }
+
+                function drawChartDropOff() {
+                    var dataDropOff = google.visualization.arrayToDataTable([
+                        ['Hour', 'Stands'],
+                        ['- 1h', availableBikesDropOffMin1h],
+                        ['- 30m', availableBikesDropOffMin30m],
+                        [dropOffHour, availableBikesDropOff],
+                        ['+ 30m', availableBikesDropOffPlus30m],
+                        ['+ 1h', availableBikesDropOffPlus1h]
+                    ]);
+
+                    var options = {
+                        title: 'DropOff Station Available Stands',
+                        curveType: 'function',
+                        legend: {
+                            position: 'bottom'
+                        },
+                        width: 800,
+                        height: 300,
+                        colors: ['#F26968']
+                    };
+
+                    var dropOffChart = new google.visualization.LineChart(document.getElementById('arriveStnGraph'));
+
+                    dropOffChart.draw(dataDropOff, options);
+                }
+            }
+        }
 
         function myMap() {
             //The mapProp variable defines the properties for the map.
@@ -327,36 +392,35 @@
                         };
                     })(marker, content, infowindow));
                 }
-                
-            }
-        var icons = {
-          red: {
-            name: 'No bikes available',
-            icon: "{{ url_for('static',filename='red.png') }}",
-    
-          },
-          yellow: {
-            name: '< 3 bikes available',
-            icon: "{{ url_for('static',filename='yellow.png') }}"
-          },
-          green: {
-            name: '> 3 bikes available',
-            icon: "{{ url_for('static',filename='green.png') }}"
-          }
-        };
-        var legend = document.getElementById('legend');
-        for (var key in icons) {
-          var type = icons[key];
-          var name = type.name;
-          var icon = type.icon;
-          var div = document.createElement('div');
-          div.innerHTML = '<img src="' + icon + '"> ' + name;
-          legend.appendChild(div);
-        }
 
-        map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(legend);
+            }
+            var icons = {
+                red: {
+                    name: 'No bikes available',
+                    icon: "{{ url_for('static',filename='red.png') }}",
+
+                },
+                yellow: {
+                    name: '< 3 bikes available',
+                    icon: "{{ url_for('static',filename='yellow.png') }}"
+                },
+                green: {
+                    name: '> 3 bikes available',
+                    icon: "{{ url_for('static',filename='green.png') }}"
+                }
+            };
+            var legend = document.getElementById('legend');
+            for (var key in icons) {
+                var type = icons[key];
+                var name = type.name;
+                var icon = type.icon;
+                var div = document.createElement('div');
+                div.innerHTML = '<img src="' + icon + '"> ' + name;
+                legend.appendChild(div);
+            }
+
+            map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(legend);
         }
-        
 
     </script>
 

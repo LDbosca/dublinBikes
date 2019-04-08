@@ -24,20 +24,19 @@
 </head>
 
 <body style="background-color: #F8F3F6; font-family: 'Raleway', sans-serif;">
-    <!--HTML element to hold the map:!-->
     <header style="background-color: #F8F3F6; font-family: 'Raleway', sans-serif;">
-        <h1 class="text-center text-danger font-weight-bold mt-2 mb-2 ml-2 mr-2" id="title">On Yer Bike Forecaster</h1>
+        <h1 class="text-center font-weight-bold mt-2 ml-2 mr-2" id="title" style="background-color: #F8F3F6; border-width:0px; border-bottom-width: 20px; border-style: solid; border-color: #A1BBD0; padding-bottom: 5px; color: #F26968">On Yer Bike Forecaster</h1>
     </header>
 
-    <div id="googleMap" style="width:100%;height:500px;"></div>
-    <div id="legend">
+    <div id="googleMap" style="width:100%;height:500px;margin: 0px"></div>
+    <div id="legend" style="border-color: #A1BBD0">
         <h3>Legend</h3>
     </div>
     <div class="text-center mt-2 mb-2 ml-2 mr-2 w-auto container-fluid">
-        <div class="row justify-content-xl-center" style="background-color:#A1BBD0;margin-top: 40px">
+        <div class="row justify-content-xl-center" style="background-color:#F8F3F6; padding-bottom: 30px; padding-top: 30px; border-width:0px; border-top-width: 20px; border-style: solid; border-color: #A1BBD0;">
 
-<!--Previous datetime form, just leaving in for reference until I sort our the value handovers-->
-<!--
+            <!--Previous datetime form, just leaving in for reference until I sort our the value handovers-->
+            <!--
             <div class="col-sm-6" id="departDatetime" style="padding: 20px 20px 50px">
                 <div class="form-group">
                     <h3> Pick-up date and time</h3>
@@ -69,7 +68,7 @@
             </div>
 -->
 
-            <div class='col-sm-6'>
+            <div class='col-sm-6' style="padding-bottom: 10px">
                 <div class="form-group">
                     <h3> Pick-up date and time</h3>
                     <div class='input-group date' id='datetimepicker1'>
@@ -89,19 +88,17 @@
 
             </script>
 
-            <div class='col-sm-6'>
+            <div class='col-sm-6' style="padding-bottom: 10px">
                 <div class="form-group">
                     <h3> Same Day Drop-off Time</h3>
                     <div class='input-group date' id='datetimepicker3'>
-                        <input type='text' class="form-control" />
+                        <input type='text' class="form-control"/>
                         <span class="input-group-addon">
                             <span class="glyphicon glyphicon-time"></span>
                         </span>
                     </div>
                     <h3> Drop-off station </h3>
                     <div id="stationsDropOff"></div>
-                    <br>
-                    <input type="submit" class="btn btn-primary" value="Submit" onclick="displayselection()">
                 </div>
             </div>
             <script type="text/javascript">
@@ -114,7 +111,9 @@
             </script>
 
         </div>
-        <div class="row justify-content-xl-center">
+        <div class="row justify-content-xl-center" style="background-color:#F8F3F6; padding-bottom: 30px; padding-top: 0px;">
+            <input type="submit" class="btn btn-lg" style="background-color: #A1BBD0; border-style: solid; border-color: black" value="Submit" onclick="displayselection()"></div>
+        <div class="row justify-content-xl-center" style="background-color:#F8F3F6; padding-bottom: 30px; padding-top: 30px; border-width:0px; border-top-width: 20px; border-bottom-width: 20px; border-style: solid; border-color: #F8F3F6;">
             <div class="col-md-6" id="currentWeather">
                 <div id="weather" style="font-family: 'Raleway', sans-serif;">
                     <h2>Current Weather Conditions</h2>
@@ -129,9 +128,17 @@
             </div>
             <div class="col-md-6" id="forecastedWeather" style="font-family: 'Raleway', sans-serif;"></div>
         </div>
-        <div class="row justify-content-xl-center">
-            <div class="col-md-6" id="departStnGraph"> </div>
-            <div class="col-md-6" id="arriveStnGraph"> </div>
+        <div class="row justify-content-xl-center" style="background-color:#F8F3F6; padding-bottom: 30px; padding-top: 30px; border-width:0px; border-top-width: 20px; border-bottom-width: 20px; border-style: solid; border-color: #F8F3F6;">
+            <div class="col-md-6" id="departStnGraph">
+                {% if bikeStation %}
+                <h2>Pickup Station Available Bikes</h2>
+                {% endif %}
+            </div>
+            <div class="col-md-6" id="arriveStnGraph">
+                {% if bikeStation %}
+                <h2>Drop-off Station Available Stands</h2>
+                {% endif %}
+            </div>
         </div>
     </div>
 
@@ -161,7 +168,7 @@
                 })],
                 stepping: 15
             });
-            $('#datetimepicker2').datetimepicker({
+            $('#datetimepicker3').datetimepicker({
                 format: 'LT',
                 disabledHours: [1, 2, 3, 4],
                 disabledTimeIntervals: [moment({
@@ -173,7 +180,7 @@
                 stepping: 15
             });
             $("#datetimepicker1").on("dp.change", function(e) {
-                $('#datetimepicker2').data("DateTimePicker").minDate(e.date);
+                $('#datetimepicker3').data("DateTimePicker").minDate(e.date);
             });
             $("#datetimepicker2").on("dp.change", function(e) {
                 $('#datetimepicker1').data("DateTimePicker").maxDate(e.date);
@@ -263,7 +270,7 @@
                     ]);
 
                     var options = {
-                        title: 'Pickup Station Available Bikes',
+                        title: '',
                         curveType: 'function',
                         legend: {
                             position: 'bottom'
@@ -289,7 +296,7 @@
                     ]);
 
                     var options = {
-                        title: 'DropOff Station Available Stands',
+                        title: '',
                         curveType: 'function',
                         legend: {
                             position: 'bottom'
@@ -336,14 +343,14 @@
                 // this will sort the array in alphabetical order
                 stationList.sort();
                 //creating the selection drop down menu with a loop that iterates thourgh the array
-                var selPickUpStation = "<select id=pickupstation>"
+                var selPickUpStation = "<select id=pickupstation style='background-color:#A1BBD0;font-family: 'Raleway', sans-serif;'>"
                 selPickUpStation += "<option value=" + 'selStation' + ">" + 'Select Station:' + "</option>"
                 for (i = 0; i < stationList.length; i++) {
                     selPickUpStation += "<option value=\"" + stationList[i] + "\">" + stationList[i] + "</option>"
                 }
                 selPickUpStation += "</select>"
                 document.getElementById("stationsPickUp").innerHTML = selPickUpStation;
-                var selDropOffStation = "<select id=dropoffstation>"
+                var selDropOffStation = "<select id=dropoffstation style='background-color:#A1BBD0;font-family: 'Raleway', sans-serif;>"
                 selDropOffStation += "<option value=" + 'selStation' + ">" + 'Select Station:' + "</option>"
                 for (i = 0; i < stationList.length; i++) {
                     selDropOffStation += "<option value=\"" + stationList[i] + "\">" + stationList[i] + "</option>"

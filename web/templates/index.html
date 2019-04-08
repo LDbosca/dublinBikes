@@ -119,6 +119,7 @@
                 stepping: 15
             });
             $('#datetimepicker3').datetimepicker({
+                minDate: new Date(),
                 format: 'LT',
                 disabledHours: [1, 2, 3, 4],
                 disabledTimeIntervals: [moment({
@@ -131,9 +132,7 @@
             });
             $("#datetimepicker1").on("dp.change", function(e) {
                 $('#datetimepicker3').data("DateTimePicker").minDate(e.date);
-            });
-            $("#datetimepicker2").on("dp.change", function(e) {
-                $('#datetimepicker1').data("DateTimePicker").maxDate(e.date);
+                $('#datetimepicker3').data("DateTimePicker").date(e.date)
             });
         });
 

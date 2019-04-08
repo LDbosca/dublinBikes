@@ -78,10 +78,10 @@ def forecast(unixTime,bikeStation,dropOffStation,dropOffTime):
     availableBikesPickupPlus30m = predictionGenerator.generatePrediction(bikeStation,pickUpTimePlus30m)
     availableBikesPickupPlus1h = predictionGenerator.generatePrediction(bikeStation,pickUpTimePlus1h)
 
-    availableBikesDropOffMin30m = predictionGenerator.generatePrediction(bikeStation,dropOffTimeMin30m)
-    availableBikesDropOffMin1h = predictionGenerator.generatePrediction(bikeStation,dropOffTimeMin1h)
-    availableBikesDropOffPlus30m = predictionGenerator.generatePrediction(bikeStation,dropOffTimePlus30m)
-    availableBikesDropOffPlus1h = predictionGenerator.generatePrediction(bikeStation,dropOffTimePlus1h)
+    availableBikesDropOffMin30m = predictionGenerator.generatePrediction(dropOffStation,dropOffTimeMin30m)
+    availableBikesDropOffMin1h = predictionGenerator.generatePrediction(dropOffStation,dropOffTimeMin1h)
+    availableBikesDropOffPlus30m = predictionGenerator.generatePrediction(dropOffStation,dropOffTimePlus30m)
+    availableBikesDropOffPlus1h = predictionGenerator.generatePrediction(dropOffStation,dropOffTimePlus1h)
 
     availBikes = [availableBikesPickupMin30m, availableBikesPickupMin1h, availableBikesPickup, availableBikesPickupPlus30m, availableBikesPickupPlus1h]
     availStnds = [availableBikesDropOffMin30m, availableBikesDropOffMin1h,availableBikesDropOff, availableBikesDropOffPlus30m, availableBikesDropOffPlus1h]

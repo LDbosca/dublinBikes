@@ -34,40 +34,6 @@
     </div>
     <div class="text-center mt-2 mb-2 ml-2 mr-2 w-auto container-fluid">
         <div class="row justify-content-xl-center" style="background-color:#F8F3F6; padding-bottom: 30px; padding-top: 30px; border-width:0px; border-top-width: 20px; border-style: solid; border-color: #A1BBD0;">
-
-            <!--Previous datetime form, just leaving in for reference until I sort our the value handovers-->
-            <!--
-            <div class="col-sm-6" id="departDatetime" style="padding: 20px 20px 50px">
-                <div class="form-group">
-                    <h3> Pick-up date and time</h3>
-                    <div class='input-group date' id='datetimepicker1'>
-                        <input type='text' class="form-control" />
-                        <span class="input-group-addon">
-                            <span class="glyphicon glyphicon-calendar"></span>
-                        </span>
-                    </div>
-
-                    <h3> Pick-up location </h3>
-                    <div id="stationsPickUp"></div>
-                </div>
-            </div>
-            <div class="col-sm-6" id="arriveDatetime" style="padding: 20px 20px 50px">
-                <div class="form-group">
-                    <h3> Drop-off time </h3>
-                    <div class='input-group date' id='datetimepicker2'>
-                        <input type='text' class="form-control" />
-                        <span class="input-group-addon">
-                            <span class="glyphicon glyphicon-time"></span>
-                        </span>
-                    </div>
-                </div>
-                <h3> Drop-off station </h3>
-                <div id="stationsDropOff"></div>
-                <br>
-                <input type="submit" class="btn btn-primary" value="Submit" onclick="displayselection()">
-            </div>
--->
-
             <div class='col-sm-6' style="padding-bottom: 10px">
                 <div class="form-group">
                     <h3> Pick-up date and time</h3>
@@ -81,18 +47,11 @@
                     <div id="stationsPickUp"></div>
                 </div>
             </div>
-            <script type="text/javascript">
-                $(function() {
-                    $('#datetimepicker1').datetimepicker();
-                });
-
-            </script>
-
             <div class='col-sm-6' style="padding-bottom: 10px">
                 <div class="form-group">
                     <h3> Same Day Drop-off Time</h3>
                     <div class='input-group date' id='datetimepicker3'>
-                        <input type='text' class="form-control"/>
+                        <input type='text' class="form-control" />
                         <span class="input-group-addon">
                             <span class="glyphicon glyphicon-time"></span>
                         </span>
@@ -101,15 +60,6 @@
                     <div id="stationsDropOff"></div>
                 </div>
             </div>
-            <script type="text/javascript">
-                $(function() {
-                    $('#datetimepicker3').datetimepicker({
-                        format: 'LT'
-                    });
-                });
-
-            </script>
-
         </div>
         <div class="row justify-content-xl-center" style="background-color:#F8F3F6; padding-bottom: 30px; padding-top: 0px;">
             <input type="submit" class="btn btn-lg" style="background-color: #A1BBD0; border-style: solid; border-color: black" value="Submit" onclick="displayselection()"></div>

@@ -44,8 +44,6 @@ def stations():
 
 @app.route('/<bikeStation>/<int:unixTime>/<dropOffStation>/<int:dropOffTime>')
 def forecast(unixTime,bikeStation,dropOffStation,dropOffTime):
-    wds = DBjson.fetchFromDB(host,port,dbname,user,password,weatherQuery)
-    bds = DBjson.fetchFromDB(host,port,dbname,user,password,bikesQuery)
      #json containing forecast for the date/time entered
     futureWeatherJson = DBjson.matchWeatherForecast(unixTime)
     
@@ -57,7 +55,6 @@ def forecast(unixTime,bikeStation,dropOffStation,dropOffTime):
     
     
     stringTime = datetime.datetime.utcfromtimestamp(unixTime) #convert unixTime into datetime object
-    stringJustTime = stringTime.strftime("%H:%M:%S") #convert time object into string for webpage, graphing.
     stringTime = stringTime.strftime("%m/%d/%Y, %H:%M:%S") #convert datetime object into string for webpage
 
     # we also predict the avail bikes and stands +/- 1 hour of the selected time to display the data in a graph
@@ -86,7 +83,7 @@ def forecast(unixTime,bikeStation,dropOffStation,dropOffTime):
     availBikes = [availableBikesPickupMin30m, availableBikesPickupMin1h, availableBikesPickup, availableBikesPickupPlus30m, availableBikesPickupPlus1h]
     availStnds = [availableBikesDropOffMin30m, availableBikesDropOffMin1h,availableBikesDropOff, availableBikesDropOffPlus30m, availableBikesDropOffPlus1h]
 
-    # render_template('index.html', futureWeatherJson=futureWeatherJson,forecast=True,wds=wds,bds=bds,bikeStation=bikeStation,stringTime=stringTime)
+
 
     return jsonify(availBikes, availStnds, futureWeatherJson)
 

@@ -41,9 +41,7 @@ def updateWeatherForecast(url,interval):
         fds = forecastDatastring.json()
         time.sleep(interval) #sets the interval between API calls
 
-#NB - matchWeatherForecast should take two parameters - the forecast json and unixTime - I had trouble with flask
-#and scope so I've temporarily using the global fds in it directly. I'll fix this at some point because it's
-#AWFUL coding! Luke xxx
+
 def matchWeatherForecast(unixTime):
     """
     Returns nearest matching weather forecast data - returns False if date is outside forecast range

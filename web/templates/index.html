@@ -67,19 +67,18 @@
             <div class="col-md-6" id="currentWeather">
                 <div id="weather" style="font-family: 'Raleway', sans-serif;">
                     <h2>Current Weather Conditions</h2>
-                    <p> The current weather is: {{ wds[0]['weatherDescr'] }} </p>
-                    <p> The current temperature is: {{ wds[0]['temperature'] }} degrees centigrade</p>
-                    <img src="http://openweathermap.org/img/w/{{wds[0]['weatherIcon']}}.png">
+                    <p> The current weather is: {{ wds[0]['weatherDescr'] }} <br> The current temperature is: {{ wds[0]['temperature'] }} degrees centigrade</p>
+                    <img src="static/{{wds[0]['weatherIcon']}}.png" style="width: 30%">
                 </div>
             </div>
             <div class="col-md-6" id="forecastedWeather" style="font-family: 'Raleway', sans-serif;"></div>
         </div>
-        <div class="row" style="background-color:#F8F3F6; margin:0;" align='center'>
-            <div class="col-md-6" >
-                <div id="departStnGraph" style="width: 100%; height: 300px; padding-bottom: 10px; padding-top: 10px;"></div>
+        <div class="row" style="background-color:#F8F3F6; margin:0;">
+            <div class="col-md-6">
+                <div id="departStnGraph" style="width: 100%; padding-bottom: 10px; padding-top: 10px;" align='center'></div>
             </div>
-            <div class="col-md-6" >
-                <div id="arriveStnGraph" style="width: 100%; height: 300px; padding-bottom: 10px; padding-top: 10px;"></div>
+            <div class="col-md-6">
+                <div id="arriveStnGraph" style="width: 100%; padding-bottom: 10px; padding-top: 10px;" align='center'></div>
             </div>
         </div>
     </div>
@@ -92,15 +91,12 @@
         // date and time picker limited to the next 5 days to match weather forecast
         var todayDate = new Date().getDate();
 
-        $(window).resize(function() {
-            drawChartDropOff();
-            drawChartPickUp();
-        });
+
 
         $(function() {
             $('#datetimepicker1').datetimepicker({
                 minDate: new Date(),
-                maxDate: new Date(new Date().setDate(todayDate + 5)),
+                maxDate: new Date(new Date().setDate(todayDate + 4)),
                 disabledHours: [1, 2, 3, 4],
                 disabledTimeIntervals: [moment({
                     h: 0,
@@ -172,7 +168,7 @@
                 var forecastedTemperature = obj[2]['main']['temp'];
                 var weatherIcon = obj[2]['weather'][0]['icon'];
                 // display forecasted weather info
-                var weather = '<h2>Forecasted Weather Conditions</h2>' + '<p>The forecasted weather is:  ' + forecastedWeather + '<br>' + 'The forecasted temperature is: ' + forecastedTemperature + ' degrees centigrade <br>' + '</p>' + '<img src="http://openweathermap.org/img/w/' + weatherIcon + '.png">'
+                var weather = '<h2>Forecasted Weather Conditions</h2>' + '<p>The forecasted weather is:  ' + forecastedWeather + '<br>' + 'The forecasted temperature is: ' + forecastedTemperature + ' degrees centigrade <br>' + '</p>' + '<img src="static/' + weatherIcon + '.png" style="width: 30%">'
                 document.getElementById("forecastedWeather").innerHTML = weather;
 
                 // extract avail bikes forecasted
@@ -224,6 +220,8 @@
                             position: 'bottom'
                         },
                         colors: ['#F26968'],
+                        height: 350,
+                        width: 400,
                         backgroundColor: '#F8F3F6'
                     };
 
@@ -257,6 +255,8 @@
                             position: 'bottom'
                         },
                         colors: ['#F26968'],
+                        height: 350,
+                        width: 400,
                         backgroundColor: '#F8F3F6'
                     };
 

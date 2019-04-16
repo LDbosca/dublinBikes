@@ -1,3 +1,9 @@
+#webserver files
+dublinBikes.ini
+dublinBikes.sock
+wsgi.py
+
+
 # Projects
 .pydevproject
 .project

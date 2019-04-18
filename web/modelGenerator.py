@@ -134,3 +134,6 @@ def generateAllModels(host,port,dbname,user,password):
     #generate weekend models    
     for station in stationList:
         generateModel(host,port,dbname,user,password,station,weekday=False)
+
+
+generateAllModels(host,port,dbname,user,password)

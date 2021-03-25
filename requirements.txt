@@ -68,7 +68,7 @@ PySocks==1.6.8
 python-dateutil==2.7.5
 python-twitter==3.5
 pytz==2018.9
-PyYAML==3.13
+PyYAML==5.4
 pyzmq==17.1.2
 query-string==2019.4.13
 request==2019.4.13

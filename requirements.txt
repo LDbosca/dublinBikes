@@ -60,7 +60,7 @@ ptyprocess==0.6.0
 public==2019.4.13
 pycparser==2.19
 pycryptodome==3.7.3
-Pygments==2.3.1
+Pygments==2.7.4
 PyMySQL==0.9.3
 pyOpenSSL==18.0.0
 pyparsing==2.3.1
